@@ -1,9 +1,9 @@
-import { createContext, useContext } from 'react';
+import { createContext, use } from 'react';
 
 const DuckContext = createContext();
 
 const useDucks = () => {
-    const context = useContext(DuckContext);
+    const context = use(DuckContext);
     if (!context)
         throw new Error(
             'useDucks can only be used within a DuckContextProvider'

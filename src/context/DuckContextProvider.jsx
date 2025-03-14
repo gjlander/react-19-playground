@@ -1,16 +1,19 @@
-import { useReducer } from 'react';
-import { duckReducer } from './reducer';
+import { useState } from 'react';
 import { DuckContext } from './context';
+// import { getAllDucks } from '../data/ducks';
 const DuckContextProvider = ({ children }) => {
-    const [duckState, duckDispatch] = useReducer(
-        duckReducer,
-        JSON.parse(localStorage.getItem('ducks')) || []
-    );
-    return (
-        <DuckContext.Provider value={{ duckState, duckDispatch }}>
-            {children}
-        </DuckContext.Provider>
-    );
+    const [ducks, setDucks] = useState([]);
+    // useEffect(() => {
+    //     (async () => {
+    //         try {
+    //             const allDucks = await getAllDucks();
+    //             setDucks(allDucks);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     })();
+    // }, []);
+    return <DuckContext value={{ ducks, setDucks }}>{children}</DuckContext>;
 };
 
 export default DuckContextProvider;
