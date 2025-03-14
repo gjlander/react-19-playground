@@ -1,5 +1,5 @@
-// const BASE_URL = 'https://duckpond-89zn.onrender.com/wild-ducks';
-const BASE_URL = 'http://localhost:3000/wild-ducks';
+const BASE_URL = 'https://duckpond-89zn.onrender.com/wild-ducks';
+// const BASE_URL = 'http://localhost:3000/wild-ducks';
 
 const getAllDucks = async () => {
     const res = await fetch(BASE_URL);
