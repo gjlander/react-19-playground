@@ -1,7 +1,5 @@
 import { useActionState } from 'react';
-// import { Toaster } from 'react-hot-toast';
 import { useDucks } from '../context/context';
-// import { createDuck } from '../data/ducks';
 
 const DuckForm = () => {
     const { addDuck } = useDucks();
@@ -10,46 +8,6 @@ const DuckForm = () => {
         imgUrl: '',
         quote: '',
     });
-    // useToastMsg(formState);
-    // const [isPending, setIsPending] = useState(false);
-    // const [form, setForm] = useState({
-    //     name: '',
-    //     imgUrl: '',
-    //     quote: '',
-    // });
-
-    // const handleChange = (e) => {
-    //     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    // };
-
-    // const handleSubmit = async (e) => {
-    //     try {
-    //         e.preventDefault();
-    //         if (!form.name) throw new Error('Your duck must have a name!');
-    //         if (!form.imgUrl) throw new Error('Your duck must have an image!');
-
-    //         setIsPending(true);
-    //         const newDuck = await createDuck(form);
-    //         setDucks((prev) => [...prev, newDuck]);
-    //         setForm({
-    //             name: '',
-    //             imgUrl: '',
-    //             quote: '',
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error(error.message);
-    //     } finally {
-    //         setIsPending(false);
-    //     }
-    // };
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     const formData = new FormData(e.target);
-    //     startTransition(() => formAction(formData));
-    //     setDucks((prev) => [...prev, formState.newDuck]);
-    // };
 
     return (
         <>
@@ -103,7 +61,6 @@ const DuckForm = () => {
                     Add duck
                 </button>
             </form>
-            {/* <Toaster /> */}
         </>
     );
 };

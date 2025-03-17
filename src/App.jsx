@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { getAllDucks } from './data/ducks';
 import { Toaster } from 'react-hot-toast';
@@ -6,12 +6,16 @@ import DuckContextProvider from './context/DuckContextProvider';
 import LoadingPage from './components/loadingUI/LoadingPage';
 import Navbar from './components/Navbar';
 import Header from './components/Header';
+import Counters from './components/Counters';
 import DuckSection from './components/DuckSection';
 import AddSection from './components/AddSection';
 import Footer from './components/Footer';
 
 function App() {
+    // const ducksPromise = useMemo(() => getAllDucks(), []);
     const ducksPromise = getAllDucks();
+    const [counter, setCounter] = useState(0);
+
     return (
         <ErrorBoundary fallback={<p>Something went wrong!</p>}>
             <Suspense fallback={<LoadingPage />}>
@@ -19,6 +23,7 @@ function App() {
                     <div className='bg-slate-600 text-gray-300 flex flex-col min-h-screen'>
                         <Navbar />
                         <Header />
+                        <Counters counter={counter} setCounter={setCounter} />
                         <main className='flex-grow flex flex-col justify-between py-4'>
                             <DuckSection />
                             <AddSection />

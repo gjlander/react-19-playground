@@ -7,7 +7,6 @@ import Footer from '../Footer';
 const LoadingPage = () => {
     return (
         <div className='bg-slate-600 text-gray-300 flex flex-col min-h-screen'>
-            <h1>Loading...</h1>
             <NavbarLoading />
             <Header />
             <main className='flex-grow flex flex-col justify-between py-4'>
