@@ -1,8 +1,12 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useDucks } from '../context/context';
+import { createDuck } from '../data/ducks';
+import { isValidUrl } from '../utils/validation';
 
 const DuckForm = () => {
-    const { duckDispatch } = useDucks();
+    const { setDucks } = useDucks();
+    const [isPending, setIsPending] = useState(false);
     const [form, setForm] = useState({
         name: '',
         imgUrl: '',
@@ -13,15 +17,33 @@ const DuckForm = () => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const newDuck = { ...form, id: crypto.randomUUID() };
-        duckDispatch({ type: 'DUCK_ADDED', payload: newDuck });
-        setForm({
-            name: '',
-            imgUrl: '',
-            quote: '',
-        });
+    const handleSubmit = async (e) => {
+        try {
+            e.preventDefault();
+
+            //validate data
+            if (!form.name) throw new Error('Your duck must have a name!');
+            if (!form.imgUrl) throw new Error('Your duck must have an image!');
+            if (!isValidUrl(form.imgUrl))
+                throw new Error('Image must be a valid URL.');
+
+            setIsPending(true);
+
+            const newDuck = await createDuck(form);
+
+            setDucks((prev) => [...prev, newDuck]);
+
+            setForm({
+                name: '',
+                imgUrl: '',
+                quote: '',
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error(error.message);
+        } finally {
+            setIsPending(false);
+        }
     };
     return (
         <form
@@ -46,7 +68,6 @@ const DuckForm = () => {
                     value={form.imgUrl}
                     onChange={handleChange}
                     name='imgUrl'
-                    // type='url'
                     placeholder='What does your duck look like?'
                     className='bg-inherit border-solid border-2 border-slate-700 rounded-lg p-2 w-full'
                 />
@@ -65,7 +86,8 @@ const DuckForm = () => {
             <button
                 id='submit-btn'
                 type='submit'
-                className='bg-green-600 p-2 rounded-lg font-bold'
+                className='btn btn-primary'
+                disabled={isPending}
             >
                 Add duck
             </button>
