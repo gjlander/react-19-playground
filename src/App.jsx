@@ -3,6 +3,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { getAllDucks } from './data/ducks';
 import { Toaster } from 'react-hot-toast';
 import DuckContextProvider from './context/DuckContextProvider';
+import LoadingPage from './components/loadingUI/LoadingPage';
 import Navbar from './components/Navbar';
 import Header from './components/Header';
 import DuckSection from './components/DuckSection';
@@ -13,7 +14,7 @@ function App() {
     const ducksPromise = getAllDucks();
     return (
         <ErrorBoundary fallback={<p>Something went wrong!</p>}>
-            <Suspense fallback={<p>Loading...</p>}>
+            <Suspense fallback={<LoadingPage />}>
                 <DuckContextProvider ducksData={ducksPromise}>
                     <div className='bg-slate-600 text-gray-300 flex flex-col min-h-screen'>
                         <Navbar />
