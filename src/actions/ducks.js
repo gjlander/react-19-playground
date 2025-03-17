@@ -1,8 +1,10 @@
+import { toast } from 'react-hot-toast';
 const BASE_URL = 'https://duckpond-89zn.onrender.com/wild-ducks';
-const createDuckAction = async (setDucks, formData) => {
+const createDuckAction = async (prev, formData) => {
     const name = formData?.get('name');
     const imgUrl = formData?.get('imgUrl');
     const quote = formData?.get('quote');
+
     try {
         const res = await fetch(BASE_URL, {
             method: 'POST',
@@ -17,11 +19,11 @@ const createDuckAction = async (setDucks, formData) => {
 
         const data = await res.json();
         // console.log(data);
-        setDucks((prev) => [...prev, data]);
 
-        return { newDuck: data, error: null };
+        return { status: 'SUCCESS', message: 'New duck added!', data };
     } catch (error) {
-        return { newDuck: null, error: error.message };
+        toast.error(error.message);
+        return { status: 'ERROR', message: error.message, data: null };
     }
 };
 

@@ -12,9 +12,7 @@ import Footer from './components/Footer';
 function App() {
     const ducksPromise = getAllDucks();
     return (
-        <ErrorBoundary
-            FallbackComponent={<p>Something went wrong loading the ducks...</p>}
-        >
+        <ErrorBoundary fallback={<p>Something went wrong!</p>}>
             <Suspense fallback={<p>Loading...</p>}>
                 <DuckContextProvider ducksData={ducksPromise}>
                     <div className='bg-slate-600 text-gray-300 flex flex-col min-h-screen'>
