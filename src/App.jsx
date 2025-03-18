@@ -1,4 +1,5 @@
 import { Toaster } from 'react-hot-toast';
+import { toastOptions } from './utils/toastSettings.js';
 import DuckContextProvider from './context/DuckContextProvider';
 import Navbar from './components/Navbar';
 import Header from './components/Header';
@@ -18,23 +19,7 @@ function App() {
                 </main>
                 <Footer />
             </div>
-            <Toaster
-                position='bottom-right'
-                toastOptions={{
-                    success: {
-                        style: {
-                            background: '#2ecc71',
-                            color: '#292929',
-                        },
-                    },
-                    error: {
-                        style: {
-                            background: '#e74c3c',
-                            color: '#f9f7f7',
-                        },
-                    },
-                }}
-            />
+            <Toaster position='bottom-right' toastOptions={toastOptions} />
         </DuckContextProvider>
     );
 }
