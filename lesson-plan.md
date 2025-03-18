@@ -380,3 +380,86 @@ export { DuckContext, useDucks };
 ```
 
 ### Data fetching with use
+
+-   Since `use` can also resolve promises, we can replace our `useEffect` with it
+-   `use` must be used within a `Suspense` boundary. So we have to wrap our `DuckContextProvider` in Suspense, which for us means basically wrapping the entire application
+-   I've already made a loading UI for the whole page, so we'll use that as the fallback
+
+```js
+<Suspense fallback={<LoadingPage />}>
+                <DuckContextProvider ducksData={ducksPromise}>
+```
+
+-   Another tricky thing about `use` is that it can't resolve Promises in render. So we can't do what our first instinct might be, something like this
+
+```js
+const [ducks, setDucks] = useState(use(getAllDucks()));
+```
+
+-   We get stuck on our fallback forever.
+-   What we have to do then, is call `getAllDucks` in a parent component, and then pass it via props
+-   So in `App.jsx`
+
+```js
+function App() {
+    const ducksPromise = getAllDucks();
+    return (
+        <Suspense fallback={<LoadingPage />}>
+            <DuckContextProvider ducksData={ducksPromise}>)}
+```
+
+-   Then back in `DuckContextProvider.jsx`
+
+```js
+const DuckContextProvider = ({ children, ducksData }) => {
+    const [ducks, setDucks] = useState(use(ducksData));
+};
+```
+
+-   Another issue with `use`, is that even though you can use it in an `if` statement, you can't use it in a `try/catch` block. What you do instead, is create an `ErrorBoundary`. You can do this manually, but any framework you work with will have some version of it, and React's own documentation recommend the small library `react-error-boundary`, so we'll use that
+
+`npm i react-error-boundary`
+
+-   Then we wrap our suspense around it with it's own fallback
+
+```js
+<ErrorBoundary fallback={<p>Something went wrong!</p>}>
+    <Suspense fallback={<LoadingPage />}>
+
+```
+
+-   A bit lazy, but now if an error does occur, we have a fallback
+-   A final consideration is that this Promise isn't cached. It gets loaded again on every rerender. So if we had another piece of state in `App.jsx`, every change would trigger a refetching
+-   Let's add a basic counter to demo this
+
+```js
+const [counter, setCounter] = useState(0);
+```
+
+`Counter.jsx`
+
+```js
+const Counter = ({ counter, setCounter }) => {
+    return (
+        <div className='flex justify-center items-center gap-2'>
+            <button
+                onClick={() => setCounter((prev) => prev - 1)}
+                className='btn'
+            >
+                -
+            </button>
+            <span>{counter}</span>
+            <button
+                onClick={() => setCounter((prev) => prev + 1)}
+                className='btn'
+            >
+                +
+            </button>
+        </div>
+    );
+};
+
+export default Counter;
+```
+
+-   If we open the network tab, we see every change in the counter state is triggering a rerender, and a new fetch

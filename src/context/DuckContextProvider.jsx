@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, use } from 'react';
 import { toast } from 'react-hot-toast';
 import { DuckContext } from './context';
-import { getAllDucks, createDuck } from '../data/ducks';
+import { createDuck } from '../data/ducks';
 import { isValidUrl } from '../utils/validation';
 
-const DuckContextProvider = ({ children }) => {
-    const [ducks, setDucks] = useState([]);
+const DuckContextProvider = ({ children, ducksData }) => {
+    const [ducks, setDucks] = useState(use(ducksData));
     const addDuck = async (previousState, formData) => {
         const name = formData?.get('name');
         const imgUrl = formData?.get('imgUrl');
@@ -29,16 +29,7 @@ const DuckContextProvider = ({ children }) => {
             return currData;
         }
     };
-    useEffect(() => {
-        (async () => {
-            try {
-                const allDucks = await getAllDucks();
-                setDucks(allDucks);
-            } catch (error) {
-                console.error(error);
-            }
-        })();
-    }, []);
+
     return (
         <DuckContext value={{ ducks, setDucks, addDuck }}>
             {children}
