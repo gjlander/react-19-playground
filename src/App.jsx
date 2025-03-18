@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useState /*useMemo*/ } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from 'react-hot-toast';
 import { toastOptions } from './utils/toastSettings.js';
@@ -14,6 +14,7 @@ import Footer from './components/Footer';
 
 function App() {
     const ducksPromise = getAllDucks();
+    // const ducksPromise = useMemo(() => getAllDucks(), []);
     const [counter, setCounter] = useState(0);
     return (
         <ErrorBoundary fallback={<p>Something went wrong!</p>}>

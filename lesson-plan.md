@@ -1,10 +1,21 @@
 # React 19 Patterns
 
-React 19 released in December, and with it some exciting new additions. Today we're going to look at a handful of the new features
+React 19 released in December, and with it some exciting new additions.
+
+## React Server Components
+
+-   The biggest of these updates was the introduction of React Server components. Don't confuse this with SSR, which React has always been able to do, and is simple static rendering on the server. RSC allow us to use full on React Components on the server. This means an entire paradigm shift in how you organize your app because:
+    -   You can remove the API layer, and fetch directly from RSC
+    -   You can make RSC async, and await inside them
+    -   Because RSC are still static once they reach the client, hooks such as `useState` and `useEffect` can't be used in RSC
+    -   You can nest Client Components (which is just what we've been always working with), and pass data from RSC to client components
+-   There is quite a bit of complexity involved in trying to use RSC in an optimized way, and currently Next.js is the only framework that offers out-of-the-box support for them.
+-   Other frameworks seem hesitant to incorporate them due to their complexity, and because they already came up with their own solutions to the problems that RSC solve, so don't feel the need. So it remains to be seen if RSC will really become the future of React.
+
+Many of the new features in React 19 are geared towards working with RSC, but still offer us some exciting new ways to work in purely client-side apps, such as:
 
 -   New options for working with forms, via Actions and a new hook: useActionState
 -   The new `use` API for working with Promises, or Context
--   A brief look at React Server Components
 
 ## Our React 18 App
 
@@ -341,7 +352,10 @@ const DuckForm = () => {
 ```
 
 -   There is, as always, lots to explore and many ways we could handle this. I chose this pattern for 2 main reasons 1. I want to update my `ducks` state on success. If I wasn't trying to update a piece of state, I could organize things a bit differently 2. I'm using a toast library to handle user feedback for errors. If I wanted the error to appear around the inputs themselves, I could include the error messages in my `formState`
-    Questions before we move on to the new `use` API?
+
+#### There are a few other new hooks that also make working with forms easier, but you'll have check those out on your own.
+
+Questions before we move on to the new `use` API?
 
 ## use API
 
@@ -463,3 +477,68 @@ export default Counter;
 ```
 
 -   If we open the network tab, we see every change in the counter state is triggering a rerender, and a new fetch
+-   To solve this, we need to cache, or memoize the results of our `getAllDucks` function, to preserve it across rerenders
+    We have 2 options:
+
+1. the `useMemo` hook
+    - `useMemo` will save the results of a function across renders. You can use it for expensive calculations to optimize your code
+    - Similar to `useEffect`, it takes a callback as the first argument, and a dependency array
+
+```js
+const ducksPromise = useMemo(() => getAllDucks(), []);
+```
+
+2. React has a new Compiler that is still in beta, so it's not fully stable yet, but it will automatically memoize functions, and do a bunch of other optimizations to your code.
+    - This React Compiler will make optimization hooks like `useMemo` and `useCallback` redundant.
+    - The nice thing is, as long as you have written code that follows the Rules of React, you can install it and use it without modifying your codebase
+    - It also has an additional linter
+
+-   To set it up, first install it
+    `npm install -D babel-plugin-react-compiler@beta eslint-plugin-react-compiler@beta`
+-   Then to use the linter, add it to your `eslint.config.js` file
+
+```js
+import reactCompiler from 'eslint-plugin-react-compiler';
+//...other stuff
+ plugins: {
+            'react-hooks': reactHooks,
+            'react-refresh': reactRefresh,
+            'react-compiler': reactCompiler,
+        },
+        rules: {
+            ...js.configs.recommended.rules,
+            ...reactHooks.configs.recommended.rules,
+            'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+            'react-refresh/only-export-components': [
+                'warn',
+                { allowConstantExport: true },
+            ],
+            'react-compiler/react-compiler': 'error',
+        },
+```
+
+-   And add the compiler to `vite.config.js`
+
+```js
+import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+
+// https://vite.dev/config/
+export default defineConfig({
+    plugins: [
+        react({
+            babel: {
+                plugins: [['babel-plugin-react-compiler', {}]],
+            },
+        }),
+        tailwindcss(),
+    ],
+});
+```
+
+-   Now our code is optimized by default! And if we check the React Dev Tools, we can see that most of our components are now auto-memoized
+
+### And there it is! This is another case of "not much has changed about our app" (except better loading page!) There's lots we weren't able to cover, but hopefully this gives you a solid frame of reference as you look through the docs, and try to work on using these new features.
+
+#### It will take time for companies to adapt to these new practices, so it's still worth knowing the "old" way of doing things, but definitely look through the documentation, and the example here, and play around with refactoring old exercises and projects with these new React 19 features!
